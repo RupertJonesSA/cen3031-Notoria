@@ -9,15 +9,14 @@ on:
         - "main"
 
 jobs:
-
   lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [21.x]
-    
+
     steps:
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v2
 
       - name: Use Node.js ${{ matrix.node-version }}
@@ -43,17 +42,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install Dependencies
-        run: npm ci
-        working-directory: client/
-
-      - name: Run tests
-        run: npm test
-        working-directory: client/
+          node-version:
+            ${{ matrix.node-version }}
+            # we need to make a Node.js server first :p
+      # - name: Setup Node
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: ${{ matrix.node-version }}
+      #
+      # - name: Install Dependencies
+      #   run: npm ci
+      #   working-directory: server/
+      #
+      # - name: Run tests
+      #   run: npm test
+      #   working-directory: server/
