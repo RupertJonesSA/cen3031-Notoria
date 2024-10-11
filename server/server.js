@@ -29,22 +29,13 @@ async function connectToMongoDB() {
 	}
 }
 
+// Import and use the routes
+require("./routes/auth")(app, client);
+
 // Sample route to check the API status
 app.get("/api/test-mongo", (req, res) => {
 	res.send("MongoDB is running!");
 });
-
-// Get a note
-app.get("/api/mongo", async (req, res) => {});
-
-// Add a new note
-app.post("/api/mongo", async (req, res) => {});
-
-// Update a note by ID
-app.put("/api/mongo/:id", async (req, res) => {});
-
-// Delete a note by ID
-app.delete("/api/mongo/:id", async (req, res) => {});
 
 // Start the server and connect to MongoDB
 app.listen(port, async () => {
@@ -52,6 +43,7 @@ app.listen(port, async () => {
 	console.log(`Server running on port ${port}`);
 });
 
+// Graceful shutdown
 process.on("SIGINT", async () => {
 	console.log("Shutting down");
 	await client.close();
