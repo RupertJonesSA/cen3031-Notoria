@@ -1,10 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const s3Routes = require('./routes/s3Routes');
 
 const app = express();
 const uri = process.env.MONGODB_URI;
 const port = 5000;
+
 
 // MongoDB client setup
 const client = new MongoClient(uri, {
@@ -50,3 +52,5 @@ process.on("SIGINT", async () => {
 	console.log("MongoDB client closed");
 	process.exit(0);
 });
+
+app.use('/s3', s3Routes);
