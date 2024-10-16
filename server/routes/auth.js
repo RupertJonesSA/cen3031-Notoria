@@ -14,8 +14,11 @@ module.exports = (app, client) => {
 			body("username").notEmpty().withMessage("Username is required"),
 			body("email").isEmail().withMessage("Please enter a valid email"),
 			body("password")
-				.isLength({ min: 6 })
-				.withMessage("Password must be at least 6 characters long"),
+				.isLength({ min: 7 })
+				.matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*])/)
+				.withMessage(
+					"Password must be at least 7 characters long, contain a capital letter and a special character"
+				),
 		],
 		async (req, res) => {
 			// Return error if information is not valid

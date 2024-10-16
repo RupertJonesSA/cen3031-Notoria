@@ -1,15 +1,14 @@
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+
 const s3Routes = require('./routes/s3Routes');
 const gptRoutes = require('./routes/gptRoutes');
 const fileUpload = require('express-fileupload');
 
-
 const app = express();
 const uri = process.env.MONGODB_URI;
 const port = 5000;
-
 
 // MongoDB client setup
 const client = new MongoClient(uri, {
