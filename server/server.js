@@ -2,6 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
+const s3Routes = require('./routes/s3Routes');
+const gptRoutes = require('./routes/gptRoutes');
+const fileUpload = require('express-fileupload');
+
 const app = express();
 const uri = process.env.MONGODB_URI;
 const port = 5000;
@@ -16,6 +20,7 @@ const client = new MongoClient(uri, {
 });
 
 app.use(express.json());
+app.use(fileUpload());
 
 // Connect to MongoDB once, keep the client open
 async function connectToMongoDB() {
@@ -50,3 +55,6 @@ process.on("SIGINT", async () => {
 	console.log("MongoDB client closed");
 	process.exit(0);
 });
+
+app.use('/s3', s3Routes);
+app.use('/gpt', gptRoutes);
