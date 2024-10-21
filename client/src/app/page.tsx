@@ -1,14 +1,23 @@
 "use client";
 
-import Spline from "@splinetool/react-spline";
 import { useRouter } from "next/navigation";
 import Head from "next/head";
-import { Suspense } from "react";
+import React, { useState } from 'react';
+
+const Spline = React.lazy(() => import("@splinetool/react-spline"));
 
 const Page = () => {
   const router = useRouter();
   const handleNavigation = () => {
     router.push("./login");
+  };
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleSceneLoad = () => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 250); 
   };
 
   return (
@@ -26,20 +35,28 @@ const Page = () => {
           crossOrigin="anonymous"
         />
       </Head>
-      <div className="bg-black min-h-screen">
-        <Suspense fallback={<div>Loading...</div>}>
-          <Spline
-            className="w-screen h-screen fixed"
-            scene="https://draft.spline.design/5UoBCFUOm4z19NTS/scene.splinecode"
-          />
-        </Suspense>
-        <button
-          onClick={handleNavigation}
-          className="w-64 h-14 bg-white fixed right-12 bottom-32 rounded-lg"
-        >
-          <h1 className="text-black font-custom text-xl">Get Started</h1>
-        </button>
-      </div>
+      <div>
+        <Spline
+          className="absolute top-0 left-0 w-screen h-screen z-[-1]"
+          scene="https://draft.spline.design/5UoBCFUOm4z19NTS/scene.splinecode"
+          onLoad={handleSceneLoad}
+        />
+
+        {isLoading && (
+          <div className="absolute w-full h-full flex justify-center items-center bg-black z-10">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+          </div>
+        )}
+
+        {!isLoading && (
+          <button
+            onClick={handleNavigation}
+            className="w-[18vw] h-[8vh] absolute right-[42vw] bottom-[48vh] z-10 rounded-lg transition ease-in-out delay-75 bg-white hover:bg-violet-950 duration-300 text-black hover:text-white"
+          >
+            <h1 className="font-custom text-xl">Get Started</h1>
+          </button>
+        )}
+      </div>    
     </>
   );
 };
