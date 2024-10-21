@@ -25,3 +25,10 @@ body {
     text-wrap: balance;
   }
 }
+
+@font-face {
+  font-family: 'NeueHaas';
+  src: url('./fonts/NeueHaasDisplayMediu.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
