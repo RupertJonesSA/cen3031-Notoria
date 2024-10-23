@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import Head from "next/head";
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Button, ButtonVariants } from "../../components/ui/button";
+import { ArrowRight } from "lucide-react";
+import Spinner from "../_components/spinner";
 
 const Spline = React.lazy(() => import("@splinetool/react-spline"));
 
@@ -17,7 +20,7 @@ const Page = () => {
   const handleSceneLoad = () => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 250); 
+    }, 250);
   };
 
   return (
@@ -43,20 +46,24 @@ const Page = () => {
         />
 
         {isLoading && (
-          <div className="absolute w-full h-full flex justify-center items-center bg-black z-10">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
-          </div>
+          <Spinner />
         )}
 
         {!isLoading && (
-          <button
-            onClick={handleNavigation}
-            className="w-[18vw] h-[8vh] absolute right-[42vw] bottom-[48vh] z-10 rounded-lg transition ease-in-out delay-75 bg-white hover:bg-violet-950 duration-300 text-black hover:text-white"
-          >
-            <h1 className="font-custom text-xl">Get Started</h1>
-          </button>
+          <>
+            <Button
+              onClick={handleNavigation}
+              className="flex pl-5 pr-5 pt-8 pb-8 placeholder-red-600 absolute right-[42vw] bottom-[48vh] z-10 animate-bounce hover:animate-none"
+              variant="ghost"
+            >
+              <h1 className="font-custom text-4xl md:text-3xl sm:text-2xl font-bold">
+                Enter Notoria
+              </h1>
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </>
         )}
-      </div>    
+      </div>
     </>
   );
 };

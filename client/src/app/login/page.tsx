@@ -1,7 +1,9 @@
 "use client";
 
 import Head from "next/head";
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Button, buttonVariants } from "../../components/ui/button";
+import Spinner from "../_components/spinner";
 
 const Spline = React.lazy(() => import("@splinetool/react-spline"));
 
@@ -43,9 +45,7 @@ const Page = () => {
         />
 
         {isLoading && (
-          <div className="absolute w-full h-full flex justify-center items-center bg-black z-10">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
-          </div>
+         <Spinner /> 
         )}
 
         {!isLoading && (
@@ -88,13 +88,12 @@ const Page = () => {
                 className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm text-black font-custom w-[14vw]"
               />
             </div>
-
-            <button
-              type="submit"
-              className="w-[14vw] h-[5vh] p-2 rounded-md font-custom transition delay-75 ease-in-out bg-white text-black hover:bg-violet-950 hover:text-white duration-300"
+            <Button
+              className="font-custom w-[14vw] h-[5vh]"
+              variant="secondary"
             >
               Submit
-            </button>
+            </Button>
           </form>
         )}
       </div>
