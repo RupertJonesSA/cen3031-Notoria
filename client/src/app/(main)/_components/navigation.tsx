@@ -1,8 +1,10 @@
 "use client";
 
-import { ChevronsLeft, MenuIcon } from "lucide-react";
+import { ChevronsLeft, MenuIcon, PlusCircle } from "lucide-react";
 import { ElementRef, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import UserItem from "./user-item";
+import Item from "./item";
 
 const Navigation = () => {
   const isResizingRef = useRef(false);
@@ -87,15 +89,16 @@ const Navigation = () => {
           <ChevronsLeft className="h-6 w-6" />
         </div>
         <div>
-          <p className="text-white font-custom">Action Items</p>
+          <UserItem />
+          <Item onClick={() => {}} label="New page" icon={PlusCircle} />
         </div>
         <div className="mt-4">
-          <p className="text-white font-custom">Documents</p>
+          {/* <p className="text-white font-custom">Documents</p>*/}
         </div>
         <div
           onMouseDown={handleMouseDown}
           onClick={resetWidth}
-          className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resie absolute h-full w-1 bg-white/10 right-0 top-0"
+          className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-white/10 right-0 top-0"
         />
       </aside>
       <div

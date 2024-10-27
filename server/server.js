@@ -1,10 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const cors = require("cors");
 
-const s3Routes = require('./routes/s3Routes');
-const gptRoutes = require('./routes/gptRoutes');
-const fileUpload = require('express-fileupload');
+// temporary comment out as I do not have the environment variables needed
+//const s3Routes = require('./routes/s3Routes');
+//const gptRoutes = require('./routes/gptRoutes');
+//const fileUpload = require('express-fileupload');
 
 const app = express();
 const uri = process.env.MONGODB_URI;
@@ -12,26 +14,31 @@ const port = 5000;
 
 // MongoDB client setup
 const client = new MongoClient(uri, {
-	serverApi: {
-		version: ServerApiVersion.v1,
-		strict: true,
-		deprecationErrors: true,
-	},
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
 });
 
 app.use(express.json());
-app.use(fileUpload());
+//app.use(fileUpload());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // change this to Next.js URL
+  }),
+);
 
 // Connect to MongoDB once, keep the client open
 async function connectToMongoDB() {
-	try {
-		await client.connect();
-		console.log("Connected to MongoDB successfully!");
-	} catch (error) {
-		console.error("Failed to connect to MongoDB:", error);
-		await client.close();
-		process.exit(1);
-	}
+  try {
+    await client.connect();
+    console.log("Connected to MongoDB successfully!");
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    await client.close();
+    process.exit(1);
+  }
 }
 
 // Import and use the routes
@@ -39,22 +46,23 @@ require("./routes/auth")(app, client);
 
 // Sample route to check the API status
 app.get("/api/test-mongo", (req, res) => {
-	res.send("MongoDB is running!");
+  res.send("MongoDB is running!");
 });
 
 // Start the server and connect to MongoDB
 app.listen(port, async () => {
-	await connectToMongoDB();
-	console.log(`Server running on port ${port}`);
+  await connectToMongoDB();
+  console.log(`Server running on port ${port}`);
 });
 
 // Graceful shutdown
 process.on("SIGINT", async () => {
-	console.log("Shutting down");
-	await client.close();
-	console.log("MongoDB client closed");
-	process.exit(0);
+  console.log("Shutting down");
+  await client.close();
+  console.log("MongoDB client closed");
+  process.exit(0);
 });
 
-app.use('/s3', s3Routes);
-app.use('/gpt', gptRoutes);
+// temporary comment out as I do not have the environment variables needed
+//app.use("/s3", s3Routes);
+//app.use("/gpt", gptRoutes);

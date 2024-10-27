@@ -45,9 +45,7 @@ const Page = () => {
           onLoad={handleSceneLoad}
         />
 
-        {isLoading && (
-          <Spinner />
-        )}
+        {isLoading && <Spinner />}
 
         {!isLoading && (
           <>
@@ -57,7 +55,7 @@ const Page = () => {
               variant="ghost"
             >
               <h1 className="font-custom text-4xl md:text-3xl sm:text-2xl font-bold">
-                Enter Notoria
+                Get Started
               </h1>
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
