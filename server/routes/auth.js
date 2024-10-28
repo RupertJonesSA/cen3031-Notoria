@@ -1,10 +1,28 @@
 const bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
 const { getUserByEmail, createUser } = require("../models/userModel");
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT_SECRET;
 
 module.exports = (app, client) => {
 	const database = client.db("UserInfo");
 	const users = database.collection("users");
+
+	const auth = (req, res, next) => {
+		const token = req.header("Authorization")?.split(" ")[1];
+
+		if (!token) {
+			return res.status(401).json({ msg: "No token, authorization denied" });
+		}
+
+		try {
+			const decoded = jwt.verify(token, jwtSecret);
+			req.user = decoded.user;
+			next();
+		} catch (err) {
+			res.status(401).json({ msg: "Token is not valid" });
+		}
+	};
 
 	// Register route
 	app.post(
@@ -79,7 +97,25 @@ module.exports = (app, client) => {
 					return res.status(400).json({ msg: "Invalid credentials" });
 				}
 
+				const payload = {
+					user: {
+						id: user._id,
+						email: user.email,
+					},
+				};
+
+				jwt.sign(
+					payload,
+					jwtSecret,
+					{ expiresIn: "1h" },
+					(err, token) => {
+						if (err) throw err;
+						res.status(200).json({ token });
+					}
+				);
+
 				res.status(200).json({ msg: "Logged in successfully" });
+
 			} catch (error) {
 				console.error(error);
 				res.status(500).send("Server error");
