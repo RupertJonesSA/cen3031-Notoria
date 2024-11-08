@@ -3,10 +3,9 @@ const express = require("express");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const cors = require("cors");
 
-// temporary comment out as I do not have the environment variables needed
-//const s3Routes = require('./routes/s3Routes');
-//const gptRoutes = require('./routes/gptRoutes');
-//const fileUpload = require('express-fileupload');
+const s3Routes = require("./routes/s3Routes");
+const gptRoutes = require("./routes/gptRoutes");
+const fileUpload = require("express-fileupload");
 
 const app = express();
 const uri = process.env.MONGODB_URI;
@@ -22,7 +21,7 @@ const client = new MongoClient(uri, {
 });
 
 app.use(express.json());
-//app.use(fileUpload());
+app.use(fileUpload());
 app.use(
   cors({
     origin: "http://localhost:3000", // change this to Next.js URL
@@ -63,6 +62,5 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
-// temporary comment out as I do not have the environment variables needed
-//app.use("/s3", s3Routes);
-//app.use("/gpt", gptRoutes);
+app.use("/s3", s3Routes);
+app.use("/gpt", gptRoutes);

@@ -1,7 +1,7 @@
 "use client";
 
 import Head from "next/head";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Button, buttonVariants } from "../../components/ui/button";
 import Spinner from "../_components/spinner";
@@ -10,7 +10,7 @@ import authApi from "../../api/auth";
 const Spline = React.lazy(() => import("@splinetool/react-spline"));
 
 // As a reminder ==>
-// email: trashisland@gmail.com 
+// email: trashisland@gmail.com
 // password: Coldvisions!
 // username: bladeeD9
 
@@ -20,18 +20,23 @@ const Page = () => {
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isRegistered, setIsRegistered] = useState<boolean>(true);
+  const [isInvalidLogin, setIsInvalidLogin] = useState<boolean>(false);
+  const [isInvalidRegister, setIsInvalidRegister] = useState<boolean>(false);
+
   const router = useRouter();
-  const handleNavigation = () =>{
+  const handleNavigation = () => {
     router.push("./documents");
-  }
+  };
 
   const handleLogin = async (email: string, password: string) => {
     const result = await authApi.loginUser(email, password);
 
     if (result.success) {
+      setIsInvalidLogin(false);
       console.log("Login successful:", result.msg);
       handleNavigation();
     } else {
+      setIsInvalidLogin(true);
       console.log("Login failed:", result.msg);
     }
   };
@@ -44,9 +49,11 @@ const Page = () => {
     const result = await authApi.registerUser(username, email, password);
 
     if (result.success) {
+      setIsInvalidRegister(false);
       console.log("Registration successful:", result.msg);
       handleNavigation();
     } else {
+      setIsInvalidRegister(true);
       console.log("Registration failed:", result.msg);
     }
   };
@@ -58,9 +65,9 @@ const Page = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(isRegistered){
+    if (isRegistered) {
       handleLogin(email, password);
-    }else{
+    } else {
       handleRegister(username, email, password);
     }
 
@@ -88,7 +95,7 @@ const Page = () => {
           crossOrigin="anonymous"
         />
       </Head>
-      <div className="flex justify-center items-center flex-col w-screen h-screen gap-6">
+      <div className="flex justify-center items-center flex-col w-screen h-screen gap-1">
         <Spline
           className="absolute top-0 left-0 w-screen h-screen z-[-1]"
           scene="https://prod.spline.design/oKwB-1S0SrIuN3cg/scene.splinecode"
@@ -97,15 +104,37 @@ const Page = () => {
 
         {isLoading && <Spinner />}
         {isRegistered && (
-          <h1 className="font-custom font-bold text-white text-4xl">Login</h1>
+          <>
+            <h1
+              className="font-custom font-bold text-white text-4xl"
+              style={{ fontSize: "clamp(20px, 2rem, 36px)" }}
+            >
+              Login
+            </h1>
+            {isInvalidLogin && (
+              <h2 className="font-custom text-sm font-bold text-red-700">
+                Password and/or email are invalid!
+              </h2>
+            )}
+          </>
         )}
         {!isRegistered && (
-          <h1
-            className="font-custom font-bold text-white text-4xl"
-            style={{ wordSpacing: "5px" }}
-          >
-            Sign Up
-          </h1>
+          <>
+            <h1
+              className="font-custom font-bold text-white"
+              style={{
+                wordSpacing: "5px",
+                fontSize: "clamp(20px, 2rem, 36px)",
+              }}
+            >
+              Sign Up
+            </h1>
+            {isInvalidRegister && (
+              <h2 className="font-custom text-red-700 text-sm font-bold">
+                Password and/or email are invalid!
+              </h2>
+            )}
+          </>
         )}
 
         {!isLoading && (
