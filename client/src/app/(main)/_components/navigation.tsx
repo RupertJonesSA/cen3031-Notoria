@@ -1,17 +1,39 @@
 "use client";
 
-import { ChevronsLeft, MenuIcon, PlusCircle } from "lucide-react";
-import { ElementRef, useRef, useState } from "react";
+import {
+  ChevronsLeft,
+  MenuIcon,
+  PlusCircle,
+  Search,
+  Settings,
+} from "lucide-react";
+import { ElementRef, useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import UserItem from "./user-item";
 import Item from "./item";
+import { ChildProps } from "postcss";
 
-const Navigation = () => {
+type NavigationProps = {
+  getFiles: () => Promise<void>;
+  documents: string[];
+  onCreate: () => Promise<void>;
+};
+
+const Navigation: React.FC<NavigationProps> = ({
+  getFiles,
+  documents,
+  onCreate,
+}) => {
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const navbarRef = useRef<ElementRef<"div">>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    getFiles();
+    console.log(documents);
+  }, []);
 
   const handleMouseDown = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -73,7 +95,7 @@ const Navigation = () => {
   };
 
   return (
-    <>
+    <div className="fixed h-full">
       <aside
         ref={sidebarRef}
         className={cn(
@@ -90,10 +112,29 @@ const Navigation = () => {
         </div>
         <div>
           <UserItem />
-          <Item onClick={() => {}} label="New page" icon={PlusCircle} />
+          <Item onClick={() => {}} label="Search" icon={Search} isSearch />
+          <Item onClick={() => {}} label="Settings" icon={Settings} />
+          <Item
+            onClick={() => {
+              onCreate();
+            }}
+            label="New page"
+            icon={PlusCircle}
+          />
         </div>
         <div className="mt-4">
-          {/* <p className="text-white font-custom">Documents</p>*/}
+          <ul>
+            {documents?.map((document) => {
+              return (
+                <li
+                  key={document}
+                  className="text-muted-foreground font-custom"
+                >
+                  {document}
+                </li>
+              );
+            })}
+          </ul>
         </div>
         <div
           onMouseDown={handleMouseDown}
@@ -118,7 +159,7 @@ const Navigation = () => {
           )}
         </nav>
       </div>
-    </>
+    </div>
   );
 };
 

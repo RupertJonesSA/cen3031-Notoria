@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Toaster } from 'sonner';
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -29,7 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster position="bottom-center"/>
+      </body>
     </html>
   );
 }

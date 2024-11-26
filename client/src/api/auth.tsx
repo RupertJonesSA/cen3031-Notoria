@@ -1,27 +1,26 @@
 const apiUrl = process.env.API_URL;
 
 const loginUser = async (email: string, password: string) => {
-  try {
+  try{
     const res = await fetch(`${apiUrl}/api/login`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type" : "application/json",
       },
       body: JSON.stringify({ email, password }),
     });
 
     const result = await res.json();
 
-    if (res.ok) {
-      // server returned status code within [200, 299]
+    if(res.ok){
       return { success: true, msg: result.msg };
-    } else {
+    }else{
       return { success: false, msg: result.msg };
     }
-  } catch (err) {
-    return { success: false, msg: "Error during login" };
+  }catch(err){
+    return {success: false, msg: "Error during login" };
   }
-};
+}
 
 const registerUser = async (
   username: string,
