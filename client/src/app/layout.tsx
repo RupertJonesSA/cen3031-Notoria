@@ -1,5 +1,27 @@
 import "./globals.css";
-import Head from "next/head";
+import { Toaster } from 'sonner';
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Notoria",
+  description: "testing this out lol",
+  icons: {
+    icon: [
+      {
+        media: "(prefers-color-scheme: light)",
+        url: "/icon-light.ico",
+        href: "/icon-light.ico",
+        sizes: "16x16",
+      },
+      {
+        media: "(prefers-color-scheme: dark)",
+        url: "/icon-dark.ico",
+        href: "/icon-dark.ico",
+        sizes: "16x16",
+      },
+    ],
+  },
+};
 
 export default function RootLayout({
   children,
@@ -8,14 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
-        <meta charSet="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Notoria</title>
-      </Head>
       <body>
         {children}
+        <Toaster position="bottom-center"/>
       </body>
-    </html> 
+    </html>
   );
 }

@@ -1,17 +1,77 @@
 "use client";
 
 import Head from "next/head";
-import React, { useState } from 'react';
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { Button, buttonVariants } from "../../components/ui/button";
+import Spinner from "../_components/spinner";
+import authApi from "../../api/auth";
 
 const Spline = React.lazy(() => import("@splinetool/react-spline"));
 
-const Page = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+// As a reminder ==>
+// email: trashisland@gmail.com
+// password: Coldvisions!
+// username: bladeeD9
 
-  const handleSubmit = (e: any) => {
+const Page = () => {
+  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isRegistered, setIsRegistered] = useState<boolean>(true);
+  const [isInvalidLogin, setIsInvalidLogin] = useState<boolean>(false);
+  const [isInvalidRegister, setIsInvalidRegister] = useState<boolean>(false);
+
+  const router = useRouter();
+  const handleNavigation = () => {
+    router.push("./documents");
+  };
+
+  const handleLogin = async (email: string, password: string) => {
+    const result = await authApi.loginUser(email, password);
+
+    if (result.success) {
+      setIsInvalidLogin(false);
+      console.log("Login successful:", result.msg);
+      handleNavigation();
+    } else {
+      setIsInvalidLogin(true);
+      console.log("Login failed:", result.msg);
+    }
+  };
+
+  const handleRegister = async (
+    username: string,
+    email: string,
+    password: string,
+  ) => {
+    const result = await authApi.registerUser(username, email, password);
+
+    if (result.success) {
+      setIsInvalidRegister(false);
+      console.log("Registration successful:", result.msg);
+      handleNavigation();
+    } else {
+      setIsInvalidRegister(true);
+      console.log("Registration failed:", result.msg);
+    }
+  };
+
+  const toggleRegistration = (e: React.MouseEvent) => {
     e.preventDefault();
+    setIsRegistered(!isRegistered);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isRegistered) {
+      handleLogin(email, password);
+    } else {
+      handleRegister(username, email, password);
+    }
+
+    console.log("Successfully submitted form");
   };
 
   const handleIsLoading = () => {
@@ -30,30 +90,78 @@ const Page = () => {
         />
         <link
           rel="preload"
-          href="https://draft.spline.design/T7tCI0NsyUBMwcXM/scene.splinecode"
+          href="https://prod.spline.design/oKwB-1S0SrIuN3cg/scene.splinecode"
           as="fetch"
           crossOrigin="anonymous"
         />
       </Head>
-      <div>
+      <div className="flex justify-center items-center flex-col w-screen h-screen gap-1">
         <Spline
           className="absolute top-0 left-0 w-screen h-screen z-[-1]"
-          scene="https://draft.spline.design/T7tCI0NsyUBMwcXM/scene.splinecode"
+          scene="https://prod.spline.design/oKwB-1S0SrIuN3cg/scene.splinecode"
           onLoad={handleIsLoading}
         />
 
-        {isLoading && (
-          <div className="absolute w-full h-full flex justify-center items-center bg-black z-10">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
-          </div>
+        {isLoading && <Spinner />}
+        {isRegistered && (
+          <>
+            <h1
+              className="font-custom font-bold text-white text-4xl"
+              style={{ fontSize: "clamp(20px, 2rem, 36px)" }}
+            >
+              Login
+            </h1>
+            {isInvalidLogin && (
+              <h2 className="font-custom text-sm font-bold text-red-700">
+                Password and/or email are invalid!
+              </h2>
+            )}
+          </>
+        )}
+        {!isRegistered && (
+          <>
+            <h1
+              className="font-custom font-bold text-white"
+              style={{
+                wordSpacing: "5px",
+                fontSize: "clamp(20px, 2rem, 36px)",
+              }}
+            >
+              Sign Up
+            </h1>
+            {isInvalidRegister && (
+              <h2 className="font-custom text-red-700 text-sm font-bold">
+                Password and/or email are invalid!
+              </h2>
+            )}
+          </>
         )}
 
         {!isLoading && (
           <form
             onSubmit={handleSubmit}
-            className="absolute z-10 top-[30vh] left-[42vw] p-4"
+            className="z-10 flex min-w-56 flex-col gap-6 items-center"
           >
-            <div className="mb-4">
+            {!isRegistered && (
+              <div className="flex-1">
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-white font-custom"
+                >
+                  Username:
+                </label>
+                <input
+                  type="username"
+                  id="username"
+                  name="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm text-black font-custom"
+                />
+              </div>
+            )}
+            <div className="flex-1">
               <label
                 htmlFor="email"
                 className="block text-sm font-medium text-white font-custom"
@@ -67,11 +175,11 @@ const Page = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm text-black font-custom w-[14vw]"
+                className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm text-black font-custom"
               />
             </div>
 
-            <div className="mb-4">
+            <div className="flex-1">
               <label
                 htmlFor="password"
                 className="block text-sm font-medium text-white font-custom"
@@ -85,16 +193,30 @@ const Page = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm text-black font-custom w-[14vw]"
+                className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm text-black font-custom"
               />
             </div>
-
-            <button
-              type="submit"
-              className="w-[14vw] h-[5vh] p-2 rounded-md font-custom transition delay-75 ease-in-out bg-white text-black hover:bg-violet-950 hover:text-white duration-300"
-            >
+            <Button className="font-custom flex-auto w-52" variant="secondary">
               Submit
-            </button>
+            </Button>
+            {isRegistered && (
+              <a
+                href="#"
+                onClick={toggleRegistration}
+                className="cursor-pointer text-violet-500 text-sm hover:underline"
+              >
+                Not yet registered?
+              </a>
+            )}
+            {!isRegistered && (
+              <a
+                href="#"
+                onClick={toggleRegistration}
+                className="cursor-pointer text-violet-500 text-sm hover:underline"
+              >
+                Already registered?
+              </a>
+            )}
           </form>
         )}
       </div>
