@@ -52,20 +52,48 @@ const uploadS3 = (req, res) => {
 
 const getS3 = async (req, res) => {
   const { filename } = req.params;
-
   try {
     const command = new GetObjectCommand({
       Bucket: BUCKET_NAME,
       Key: filename,
     });
     const fileData = await s3Client.send(command);
-
     let fileContent = "";
     for await (const chunk of fileData.Body) {
       fileContent += chunk.toString();
     }
 
-    res.send({ filename, content: fileContent });
+    let blockNoteContent;
+
+    try {
+      // First, try to parse as JSON
+      blockNoteContent = JSON.parse(fileContent);
+
+      // If it's an array of BlockNote blocks, return it
+      if (
+        Array.isArray(blockNoteContent) &&
+        blockNoteContent.every((block) => block.type && block.content)
+      ) {
+        return res.send({
+          filename,
+          content: blockNoteContent,
+        });
+      }
+    } catch (jsonParseError) {
+      // If JSON parsing fails, create BlockNote content from plain text
+      blockNoteContent = fileContent
+        .split("\n\n") // Split into paragraphs
+        .filter((p) => p.trim() !== "") // Filter out empty paragraphs
+        .map((paragraph) => ({
+          type: "paragraph",
+          content: paragraph, // Directly use the paragraph as a string
+        }));
+    }
+
+    res.send({
+      filename,
+      content: blockNoteContent,
+    });
   } catch (error) {
     console.error("Error retrieving file:", error);
     res.status(500).send("Error retrieving file.");
@@ -78,7 +106,13 @@ const listS3 = async (req, res) => {
     const command = new ListObjectsV2Command({ Bucket: BUCKET_NAME });
     const response = await s3Client.send(command);
 
+    if (response.Contents === undefined) {
+      console.log("No files!");
+      res.json([]);
+      return;
+    }
     const fileList = response.Contents.map((item) => item.Key);
+    console.log(fileList);
     res.json(fileList);
   } catch (error) {
     console.error("Error listing files:", error);
@@ -132,10 +166,18 @@ const deleteS3 = async (req, res) => {
 };
 
 const saveS3 = async (req, res) => {
+  console.log("Full request body:", req.body);
+  console.log("Request headers:", req.headers);
+
   const { filename, content } = req.body;
 
-  if (!filename) {
-    return res.status(400).send("Filename is required.");
+  console.log("Filename:", filename);
+  console.log("Content type:", typeof content);
+  console.log("Content:", content);
+
+  if (!filename || !content) {
+    console.log("Missing filename or content");
+    return res.status(400).send("Filename and content are required.");
   }
 
   try {
@@ -143,13 +185,13 @@ const saveS3 = async (req, res) => {
       Bucket: BUCKET_NAME,
       Key: filename,
       Body: content,
-      ContentType: "text/plain",
+      ContentType: "application/json",
     });
 
     await s3Client.send(command);
     res.send(`File '${filename}' saved successfully.`);
   } catch (error) {
-    console.error("Error saving file to S3:", error.message);
+    console.error("Full error:", error);
     res.status(500).send("Error saving file to S3.");
   }
 };

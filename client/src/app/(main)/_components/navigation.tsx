@@ -6,24 +6,25 @@ import {
   PlusCircle,
   Search,
   Settings,
+  Upload,
 } from "lucide-react";
 import { ElementRef, useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import UserItem from "./user-item";
 import Item from "./item";
-import { ChildProps } from "postcss";
+import DocumentList from "../_components/document-list";
+import { useFileContext } from "../(routes)/documents/ApiContext";
+import { useSearch } from "../../../hooks/use-search";
+import { useSettings } from "../../../hooks/use-settings";
+import { useRouter } from "next/navigation";
 
-type NavigationProps = {
-  getFiles: () => Promise<void>;
-  documents: string[];
-  onCreate: () => Promise<void>;
-};
+const Navigation: React.FC = () => {
+  const search = useSearch();
+  const settings = useSettings();
+  const router = useRouter();
 
-const Navigation: React.FC<NavigationProps> = ({
-  getFiles,
-  documents,
-  onCreate,
-}) => {
+  const { getFiles, onCreate, documents } = useFileContext();
+
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const navbarRef = useRef<ElementRef<"div">>(null);
@@ -32,7 +33,6 @@ const Navigation: React.FC<NavigationProps> = ({
 
   useEffect(() => {
     getFiles();
-    console.log(documents);
   }, []);
 
   const handleMouseDown = (
@@ -95,11 +95,11 @@ const Navigation: React.FC<NavigationProps> = ({
   };
 
   return (
-    <div className="fixed h-full">
+    <>
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-zinc-900 overflow-y-auto relative flex w-60 flex-col z-[99999]",
+          "group/sidebar h-full bg-neutral-200 dark:bg-black overflow-y-auto relative flex w-60 flex-col z-[99999]",
           isResetting && "transition-all ease-in-out duration-300",
         )}
       >
@@ -112,29 +112,36 @@ const Navigation: React.FC<NavigationProps> = ({
         </div>
         <div>
           <UserItem />
-          <Item onClick={() => {}} label="Search" icon={Search} isSearch />
-          <Item onClick={() => {}} label="Settings" icon={Settings} />
           <Item
-            onClick={() => {
-              onCreate();
-            }}
+            onClick={search.onOpen}
+            label="Search"
+            icon={Search}
+            isSearch
+            getFiles={getFiles}
+          />
+          <Item
+            onClick={settings.onOpen}
+            label="Settings"
+            icon={Settings}
+            getFiles={getFiles}
+          />
+          <Item
+            onClick={onCreate}
             label="New page"
             icon={PlusCircle}
+            getFiles={getFiles}
+          />
+          <Item
+            onClick={() => {
+              router.push("/documents");
+            }}
+            label="Upload"
+            icon={Upload}
+            getFiles={getFiles}
           />
         </div>
         <div className="mt-4">
-          <ul>
-            {documents?.map((document) => {
-              return (
-                <li
-                  key={document}
-                  className="text-muted-foreground font-custom"
-                >
-                  {document}
-                </li>
-              );
-            })}
-          </ul>
+          <DocumentList documents={documents} level={0} getFiles={getFiles} />
         </div>
         <div
           onMouseDown={handleMouseDown}
@@ -159,7 +166,7 @@ const Navigation: React.FC<NavigationProps> = ({
           )}
         </nav>
       </div>
-    </div>
+    </>
   );
 };
 
