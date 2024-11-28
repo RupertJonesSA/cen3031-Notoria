@@ -58,7 +58,10 @@ module.exports = (app, client) => {
 				const salt = await bcrypt.genSalt(10);
 				const hashedPassword = await bcrypt.hash(password, salt);
 
-				await createUser({ username, email, password: hashedPassword }, users);
+				await createUser(
+					{ username, email, password: hashedPassword, files: [] },
+					users
+				);
 
 				res.status(201).json({ msg: "User registered successfully" });
 			} catch (error) {
@@ -104,18 +107,14 @@ module.exports = (app, client) => {
 					},
 				};
 
-				jwt.sign(
-					payload,
-					jwtSecret,
-					{ expiresIn: "1h" },
-					(err, token) => {
-						if (err) throw err;
-						res.status(200).json({ token });
-					}
-				);
+				jwt.sign(payload, jwtSecret, { expiresIn: "1h" }, (err, token) => {
+					if (err) throw err;
+					res
+						.status(200)
+						.json({ token, files: user.files, userID: user._id.toString() });
+				});
 
 				res.status(200).json({ msg: "Logged in successfully" });
-
 			} catch (error) {
 				console.error(error);
 				res.status(500).send("Server error");
