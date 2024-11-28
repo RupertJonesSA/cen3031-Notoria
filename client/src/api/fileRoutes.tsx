@@ -21,21 +21,16 @@ const uploadFile = async (formData: FormData) => {
 
 const getFile = async (filename: string) => {
   try {
-    const res = await fetch(`${apiUrl}/s3/getFile`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ filename }),
-    });
+    const res = await fetch(`${apiUrl}/s3/getFile/${filename}`);
+
+    if (!res.ok) {
+      return { success: false, msg: "Error during file retrieval" };
+    }
 
     const result = await res.json();
 
-    if (res.ok) {
-      return { success: true, msg: result.content };
-    } else {
-      return { success: false, msg: "Error during file retrieval" };
-    }
+    // Check if result.content exists and is a string, then parse it
+    return { success: true, msg: result.content };
   } catch (err) {
     return { success: false, msg: "Error during file retrieval" };
   }
@@ -77,9 +72,8 @@ const downloadFile = async (filename: string) => {
 
 const deleteFile = async (filename: string) => {
   try {
-    const res = await fetch(`${apiUrl}/s3/delete`, {
+    const res = await fetch(`${apiUrl}/s3/delete/${filename}`, {
       method: "DELETE",
-      body: JSON.stringify({ filename }),
     });
 
     const result = await res.text();
@@ -94,15 +88,19 @@ const deleteFile = async (filename: string) => {
   }
 };
 
-const saveFile = async (filename: string, content: string) => {
+const saveFile = async (filename: string, content: any) => {
   try {
     const res = await fetch(`${apiUrl}/s3/save`, {
       method: "POST",
-      body: JSON.stringify({ filename, content }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        filename,
+        content: JSON.stringify(content),
+      }),
     });
-
     const result = await res.text();
-
     if (res.ok) {
       return { success: true, msg: result };
     } else {

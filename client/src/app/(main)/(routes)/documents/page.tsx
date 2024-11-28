@@ -1,26 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
 import fileApi from "../../../../api/fileRoutes";
-import Navigation from "../../_components/navigation";
+import { useFileContext } from "./ApiContext";
 
-const DocumentsPage = () => {
+const DocumentsPage: React.FC = () => {
+  const { getFiles, onCreate } = useFileContext();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [documents, setDocuments] = useState([]);
-
-  const getFiles = async () => {
-    const response = await fileApi.listFiles();
-    if (response.success) {
-      setDocuments(response.msg);
-      console.log("Successful retrieval of files.");
-    } else {
-      console.log("Unsuccessful retrieval of files.");
-    }
-  };
 
   // change selected file based on input field
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,31 +37,9 @@ const DocumentsPage = () => {
     }
   };
 
-  // handle browser file creation
-  const onCreate = async () => {
-    // create blank text file
-    const file = new Blob([""], { type: "text/plain" });
-
-    const formData = new FormData();
-    formData.append("file", file, "untitled.txt");
-
-    const response = await fileApi.uploadFile(formData);
-    if (response.success) {
-      toast.success("File created!");
-      getFiles();
-    } else {
-      toast.error("Failed to create file.");
-    }
-  };
-
   return (
     <>
-      <Navigation
-        getFiles={getFiles}
-        documents={documents}
-        onCreate={onCreate}
-      />
-      <div className="font-custom text-white h-full flex flex-col items-center justify-center space-y-4">
+      <div className="font-custom text-primary h-full flex flex-col items-center justify-center space-y-4">
         <Image
           src="/main-dark-bg.png"
           height="300"

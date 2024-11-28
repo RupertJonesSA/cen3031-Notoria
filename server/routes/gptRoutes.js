@@ -1,7 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { AISummary } = require('../constrollers/gptController');
+const { AISummary } = require("../controllers/gptController");
 
-router.post('/summary', AISummary);
+router.post("/summary", AISummary);
 
 module.exports = router;

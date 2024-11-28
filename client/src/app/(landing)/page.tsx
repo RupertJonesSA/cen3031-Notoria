@@ -51,7 +51,7 @@ const Page = () => {
           <>
             <Button
               onClick={handleNavigation}
-              className="flex pl-5 pr-5 pt-8 pb-8 placeholder-red-600 absolute right-[42vw] bottom-[48vh] z-10 animate-bounce hover:animate-none"
+              className="flex pl-5 pr-5 pt-8 pb-8 placeholder-red-600 absolute right-[42vw] bottom-[48vh] z-10"
               variant="ghost"
             >
               <h1 className="font-custom text-4xl md:text-3xl sm:text-2xl font-bold">

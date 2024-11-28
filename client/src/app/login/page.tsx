@@ -9,11 +9,6 @@ import authApi from "../../api/auth";
 
 const Spline = React.lazy(() => import("@splinetool/react-spline"));
 
-// As a reminder ==>
-// email: trashisland@gmail.com
-// password: Coldvisions!
-// username: bladeeD9
-
 const Page = () => {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -157,7 +152,7 @@ const Page = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm text-black font-custom"
+                  className="mt-1 p-2 block border border-accent rounded-md shadow-sm text-white font-custom"
                 />
               </div>
             )}
@@ -175,7 +170,7 @@ const Page = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm text-black font-custom"
+                className="mt-1 p-2 block border border-accent rounded-md shadow-sm text-white font-custom"
               />
             </div>
 
@@ -193,7 +188,7 @@ const Page = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-1 p-2 block border border-gray-300 rounded-md shadow-sm text-black font-custom"
+                className="mt-1 p-2 block border border-accent rounded-md shadow-sm text-white font-custom"
               />
             </div>
             <Button className="font-custom flex-auto w-52" variant="secondary">

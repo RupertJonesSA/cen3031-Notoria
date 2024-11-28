@@ -1,1 +1,5 @@
-{}
+{
+  "dependencies": {
+    "@blocknote/react": "^0.19.2"
+  }
+}

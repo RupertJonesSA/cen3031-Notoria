@@ -1,15 +1,21 @@
 "use client";
 
-import { Spinner } from "../../../_components/spinner";
+import React from "react";
 import Navigation from "../../_components/navigation";
-import { useState } from "react";
-import fileApi from "../../../../api/fileRoutes";
+import { FileProvider } from "./ApiContext";
+import { SearchCommand } from "../../../../components/search-command";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="h-full flex bg-[#1F1F1F]">
-      <main className="flex-1 h-full overflow-y-auto">{children}</main>
-    </div>
+    <FileProvider>
+      <div className="h-full flex bg-primary-foreground">
+        <Navigation />
+        <main className="flex-1 h-full overflow-y-auto">
+          <SearchCommand />
+          {children}
+        </main>
+      </div>
+    </FileProvider>
   );
 };
 

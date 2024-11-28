@@ -19,13 +19,13 @@ const UserItem = () => {
       <DropdownMenuTrigger asChild>
         <div
           role="button"
-          className="flex items-center text-sm p-3 w-full hover:bg-white/5"
+          className="flex items-center text-sm p-3 w-full hover:bg-secondary/5"
         >
           <div className="gap-x-2 flex items-center max-w-[150px]">
             <Avatar className="h-5 w-5">
               <AvatarImage src="/pfp.jpg" />
             </Avatar>
-            <span className="text-white text-start font-medium line-clamp-1 font-custom">
+            <span className="text-primary text-start font-medium line-clamp-1 font-custom">
               Zak Arogundade&apos;s Board
             </span>
           </div>
@@ -33,7 +33,7 @@ const UserItem = () => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-80 bg-zinc-900 text-white border-zinc-950"
+        className="w-80 bg-primary-foreground text-primary border-primary"
         align="start"
         alignOffset={11}
         forceMount
@@ -43,7 +43,7 @@ const UserItem = () => {
             aaapowerline.gmail.com
           </p>
           <div className="flex items-center gap-x-2">
-            <div className="rounded-md bg-secondary p-1">
+            <div className="rounded-md bg-primary-foreground p-1">
               <Avatar className="h-8 w-8">
                 <AvatarImage src="/pfp.jpg" />
               </Avatar>
@@ -55,10 +55,10 @@ const UserItem = () => {
             </div>
           </div>
         </div>
-        <DropdownMenuSeparator className="bg-zinc-950" />
+        <DropdownMenuSeparator className="bg-primary" />
         <DropdownMenuItem
           asChild
-          className="2-full bg-zinc-900 cursor-pointer text-muted-foreground text-white font-custom"
+          className="2-full cursor-pointer text-muted-foreground  font-custom"
         >
           <p>Log out</p>
         </DropdownMenuItem>

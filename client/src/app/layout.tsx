@@ -1,6 +1,8 @@
 import "./globals.css";
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
 import { Metadata } from "next";
+import { ThemeProvider } from "../components/theme-provider";
+import { ModelProvider } from "@/components/provider/model-provider";
 
 export const metadata: Metadata = {
   title: "Notoria",
@@ -29,10 +31,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        {children}
-        <Toaster position="bottom-center"/>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          storageKey="notoria-theme"
+        >
+          <Toaster position="bottom-center" />
+          <ModelProvider />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
